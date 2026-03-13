@@ -64,6 +64,7 @@ class Property:
 
 
 class PropertyGroup:
+    """Class to provide methods for property group objects"""
     def __init__(self, name, color):
         self.name = name
         self.color = color
