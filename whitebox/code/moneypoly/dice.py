@@ -1,3 +1,5 @@
+"""Provides the class Dice and the relevant methods"""
+
 import random
 # from moneypoly.config import BOARD_SIZE
 
