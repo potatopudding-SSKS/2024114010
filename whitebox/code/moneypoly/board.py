@@ -1,3 +1,5 @@
+"""Defines positions of the special tiles and the class and the methods for the Board object"""
+
 from moneypoly.property import Property, PropertyGroup
 from moneypoly.config import (
     JAIL_POSITION,
