@@ -11,6 +11,7 @@ def get_player_names():
 
 
 def main():
+    """Main function that runs the game and perform basic error handling"""
     names = get_player_names()
     try:
         game = Game(names)
