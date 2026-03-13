@@ -1,3 +1,6 @@
+"""Provides the class Game and all the related methods to
+    pipeline the different functionalities of the game"""
+
 # import os
 
 from moneypoly.config import (
