@@ -1,3 +1,4 @@
+"""Contains the main functions that run the game"""
 from moneypoly.game import Game
 
 
