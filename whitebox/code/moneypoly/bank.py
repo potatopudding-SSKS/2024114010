@@ -1,3 +1,4 @@
+"""Defines all the bank related classes and methods"""
 # import math
 from moneypoly.config import BANK_STARTING_FUNDS
 
