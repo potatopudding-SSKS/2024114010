@@ -1,3 +1,5 @@
+"""Defines the possible cards and the class and methods related to the same"""
+
 import random
 
 CHANCE_CARDS = [
