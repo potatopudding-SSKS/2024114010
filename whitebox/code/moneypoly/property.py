@@ -8,11 +8,13 @@ class Property:
     def __init__(self, name, position, price, base_rent, group=None):
         self.name = name
         self.position = position
-        self.price = price
-        self.base_rent = base_rent
-        self.mortgage_value = price // 2
+        # .price_and_rent[0] <- price
+        # .price_and_rent[1] <- base_rent
+        self.price_and_rent = [price, base_rent]
+        # .mortgage_data[0] <- .mortgage_value
+        # .mortgage_data[1] <- .is_mortgaged
+        self.mortgage_data = [price // 2, False]
         self.owner = None
-        self.is_mortgaged = False
         self.houses = 0
 
         # Register with the group immediately on creation
@@ -26,36 +28,36 @@ class Property:
         Rent is doubled if the owner holds the entire colour group.
         Returns 0 if the property is mortgaged.
         """
-        if self.is_mortgaged:
+        if self.mortgage_data[1]:
             return 0
         if self.group is not None and self.group.all_owned_by(self.owner):
-            return self.base_rent * self.FULL_GROUP_MULTIPLIER
-        return self.base_rent
+            return self.price_and_rent[1] * self.FULL_GROUP_MULTIPLIER
+        return self.price_and_rent[1]
 
     def mortgage(self):
         """
         Mortgage this property and return the payout to the owner.
         Returns 0 if already mortgaged.
         """
-        if self.is_mortgaged:
+        if self.mortgage_data[1]:
             return 0
-        self.is_mortgaged = True
-        return self.mortgage_value
+        self.mortgage_data[1] = True
+        return self.mortgage_data[0]
 
     def unmortgage(self):
         """
         Lift the mortgage on this property.
         Returns the cost (110 % of mortgage value), or 0 if not mortgaged.
         """
-        if not self.is_mortgaged:
+        if not self.mortgage_data[1]:
             return 0
-        cost = int(self.mortgage_value * 1.1)
-        self.is_mortgaged = False
+        cost = int(self.mortgage_data[0] * 1.1)
+        self.mortgage_data[1] = False
         return cost
 
     def is_available(self):
         """Return True if this property can be purchased (unowned, not mortgaged)."""
-        return self.owner is None and not self.is_mortgaged
+        return self.owner is None and not self.mortgage_data[1]
 
     def __repr__(self):
         owner_name = self.owner.name if self.owner else "unowned"

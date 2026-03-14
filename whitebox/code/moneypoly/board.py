@@ -107,7 +107,7 @@ class Board:
         prop = self.get_property_at(position)
         if prop is None:
             return False
-        if prop.is_mortgaged:
+        if prop.mortgage_data[1]:
             return False
         return prop.owner is None
 

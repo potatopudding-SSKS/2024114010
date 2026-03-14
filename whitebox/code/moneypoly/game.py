@@ -122,7 +122,7 @@ class Game:
     def _handle_property_tile(self, player, prop):
         """Decide what to do when `player` lands on a property tile."""
         if prop.owner is None:
-            print(f"  {prop.name} is unowned — asking price ${prop.price}.")
+            print(f"  {prop.name} is unowned — asking price ${prop.price_and_rent[0]}.")
             choice = input("  Buy (b), Auction (a), or Skip (s)? ").strip().lower()
             if choice == "b":
                 self.buy_property(player, prop)
@@ -140,21 +140,21 @@ class Game:
         Purchase `prop` on behalf of `player`.
         Returns True on success, False if the player cannot afford it.
         """
-        if player.balance <= prop.price:
-            print(f"  {player.name} cannot afford {prop.name} (${prop.price}).")
+        if player.balance <= prop.price_and_rent[0]:
+            print(f"  {player.name} cannot afford {prop.name} (${prop.price_and_rent[0]}).")
             return False
-        player.deduct_money(prop.price)
+        player.deduct_money(prop.price_and_rent[0])
         prop.owner = player
         player.add_property(prop)
-        self.bank.collect(prop.price)
-        print(f"  {player.name} purchased {prop.name} for ${prop.price}.")
+        self.bank.collect(prop.price_and_rent[0])
+        print(f"  {player.name} purchased {prop.name} for ${prop.price_and_rent[0]}.")
         return True
 
     def pay_rent(self, player, prop):
         """
         Charge `player` the current rent on `prop` and transfer it to the owner.
         """
-        if prop.is_mortgaged:
+        if prop.mortgage_data[1]:
             print(f"  {prop.name} is mortgaged — no rent collected.")
             return
         if prop.owner is None:
@@ -220,7 +220,7 @@ class Game:
 
     def auction_property(self, prop):
         """Run an open auction for `prop` among all active players."""
-        print(f"\n  [Auction] Bidding on {prop.name} (listed at ${prop.price})")
+        print(f"\n  [Auction] Bidding on {prop.name} (listed at ${prop.price_and_rent[0]})")
         highest_bid = 0
         highest_bidder = None
 
@@ -352,7 +352,7 @@ class Game:
             # Release all properties back to the bank
             for prop in list(player.properties):
                 prop.owner = None
-                prop.is_mortgaged = False
+                prop.mortgage_data[1] = False
             player.properties.clear()
             if player in self.players:
                 self.players.remove(player)
@@ -421,24 +421,24 @@ class Game:
 
     def _menu_mortgage(self, player):
         """Interactively select a property to mortgage."""
-        mortgageable = [p for p in player.properties if not p.is_mortgaged]
+        mortgageable = [p for p in player.properties if not p.mortgage_data[1]]
         if not mortgageable:
             print("  No properties available to mortgage.")
             return
         for i, prop in enumerate(mortgageable):
-            print(f"  {i + 1}. {prop.name}  (value: ${prop.mortgage_value})")
+            print(f"  {i + 1}. {prop.name}  (value: ${prop.mortgage_data[0]})")
         idx = ui.safe_int_input("  Select: ", default=0) - 1
         if 0 <= idx < len(mortgageable):
             self.mortgage_property(player, mortgageable[idx])
 
     def _menu_unmortgage(self, player):
         """Interactively select a mortgaged property to redeem."""
-        mortgaged = [p for p in player.properties if p.is_mortgaged]
+        mortgaged = [p for p in player.properties if p.mortgage_data[1]]
         if not mortgaged:
             print("  No mortgaged properties to redeem.")
             return
         for i, prop in enumerate(mortgaged):
-            cost = int(prop.mortgage_value * 1.1)
+            cost = int(prop.mortgage_data[0] * 1.1)
             print(f"  {i + 1}. {prop.name}  (cost to redeem: ${cost})")
         idx = ui.safe_int_input("  Select: ", default=0) - 1
         if 0 <= idx < len(mortgaged):
