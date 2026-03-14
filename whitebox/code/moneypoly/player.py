@@ -13,7 +13,7 @@ class Player:
         self.position = 0
         self.properties = []
         # .jail_stuff[0] <- .in_jail
-        # .jail_stuff[1] <- .jail_turns 
+        # .jail_stuff[1] <- .jail_turns
         # .jail_stuff[2] <- .get_out_of_jail_cards
         self.jail_stuff = [False, 0, 0]
         self.is_eliminated = False

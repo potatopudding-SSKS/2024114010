@@ -5,7 +5,8 @@ class Property:
 
     FULL_GROUP_MULTIPLIER = 2
 
-    def __init__(self, name, position, price, base_rent, group=None):
+    def __init__(self, name, position, metadata, group=None):
+        price, base_rent = metadata
         self.name = name
         self.position = position
         # .price_and_rent[0] <- price
